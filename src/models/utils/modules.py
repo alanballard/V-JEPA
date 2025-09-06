@@ -58,7 +58,7 @@ class Attention(nn.Module):
         self.proj_drop = nn.Dropout(proj_drop)
         self.use_sdpa = use_sdpa
 
-    def forward(self, x, mask=None):
+    def forward(self, x):
         B, N, C = x.shape
         qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]  # [B, num_heads, N, D]
@@ -111,8 +111,8 @@ class Block(nn.Module):
             act_layer=act_layer,
             drop=drop)
 
-    def forward(self, x, return_attention=False, mask=None):
-        y, attn = self.attn(self.norm1(x), mask=mask)
+    def forward(self, x, return_attention=False):
+        y, attn = self.attn(self.norm1(x))
         if return_attention:
             return attn
         x = x + y

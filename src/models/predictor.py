@@ -220,16 +220,9 @@ class VisionTransformerPredictor(nn.Module):
         x = x.repeat(len(masks_tgt), 1, 1)
         x = torch.cat([x, pred_tokens], dim=1)
 
-        # FIXME: this implementation currently assumes masks_ctxt and masks_tgt
-        # are alligned 1:1 (ok with MultiMask wrapper on predictor but
-        # otherwise will break)
-        masks_ctxt = torch.cat(masks_ctxt, dim=0)
-        masks_tgt = torch.cat(masks_tgt, dim=0)
-        masks = torch.cat([masks_ctxt, masks_tgt], dim=1)
-
         # Fwd prop
         for blk in self.predictor_blocks:
-            x = blk(x, mask=masks)
+            x = blk(x)
         x = self.predictor_norm(x)
 
         # Return output corresponding to target tokens

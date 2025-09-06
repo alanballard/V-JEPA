@@ -177,12 +177,11 @@ class VisionTransformer(nn.Module):
         # Mask away unwanted tokens (if masks provided)
         if masks is not None:
             x = apply_masks(x, masks)
-            masks = torch.cat(masks, dim=0)
 
         # Fwd prop
         outs = []
         for i, blk in enumerate(self.blocks):
-            x = blk(x, mask=masks)
+            x = blk(x)
             if self.out_layers is not None and i in self.out_layers:
                 outs.append(self.norm(x))
 
